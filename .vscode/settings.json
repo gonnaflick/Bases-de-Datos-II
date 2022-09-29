@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 13306,
+            "askForPassword": true,
+            "driver": "MySQL",
+            "name": "Bases de Datos II",
+            "database": "empresa",
+            "username": "schnippen"
+        }
+    ]
+}

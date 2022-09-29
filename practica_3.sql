@@ -71,6 +71,23 @@ HAVING COUNT(dept_no) = (
 	) AS cuenta
 );
 
+# Metodo 2 para el ejercicio 8, seleccionar maximo a partir de una tabla virtual
+CREATE VIEW tabla
+AS 
+	SELECT COUNT(*) AS "cnt" 
+	FROM emple 
+	GROUP BY dept_no;
+
+SELECT dnombre AS "Departamento",COUNT(*) AS "Numero de empleados"
+FROM emple
+JOIN depart
+USING(dept_no)
+GROUP BY dnombre
+HAVING COUNT(dept_no) = (
+	SELECT MAX(cnt) 
+	FROM tabla
+);
+
 # 9. Mostrar los departamentos cuya suma de salarios sea mayor que la media de salarios de todos los empleados. 
 SELECT dnombre "Departamento", SUM(salario) AS "Suma de salarios > a la media total"
 FROM emple
