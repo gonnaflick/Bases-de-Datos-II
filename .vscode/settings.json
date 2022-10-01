@@ -12,6 +12,19 @@
             "name": "Bases de Datos II",
             "database": "empresa",
             "username": "schnippen"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 13306,
+            "askForPassword": true,
+            "driver": "MySQL",
+            "name": "Examen Bases de Datos II",
+            "database": "banco",
+            "username": "schnippen"
         }
     ]
 }
