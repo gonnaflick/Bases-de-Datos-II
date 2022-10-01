@@ -87,16 +87,16 @@ WHERE estado IS NOT FALSE;
 SELECT 
     nombre AS 'Nombre de Usuario', 
     sum_dinero AS 'Suma extraccion', 
-    COUNT_usr AS 'Cantidad extracciones'  
+    count_usr AS 'Cantidad extracciones'  
 FROM (
     SELECT 
         nombre, 
         ROUND(SUM(dinero), 2) AS sum_dinero, 
-        COUNT(num_usr) AS COUNT_usr
+        COUNT(num_usr) AS count_usr
     FROM usr 
     JOIN extracciones 
     USING(num_usr) 
-    WHERE dinero IS NOT FALSE 
+    WHERE estado IS NOT FALSE 
     GROUP BY num_usr
 ) AS ordenar 
 order by sum_dinero DESC;
@@ -112,7 +112,7 @@ FROM (
         ROUND(AVG(dinero), 2) AS prom_dinero 
     FROM usr JOIN extracciones 
     USING(num_usr) 
-    WHERE dinero IS NOT FALSE 
+    WHERE estado IS NOT FALSE 
     GROUP BY num_usr
 ) AS ordenar 
 order by prom_dinero ASC;
@@ -127,7 +127,7 @@ FROM (
         YEAR(fecha) AS año_fecha,
         ROUND(SUM(dinero), 2) AS sum_dinero
     FROM extracciones 
-    WHERE dinero IS NOT FALSE 
+    WHERE estado IS NOT FALSE 
     GROUP BY YEAR(fecha)
 ) AS ordenar 
 order by año_fecha ASC;
@@ -144,7 +144,7 @@ FROM (
         YEAR(fecha) AS año_fecha, 
         MONTH(fecha) AS mes_fecha 
     FROM extracciones 
-    WHERE dinero IS NOT FALSE 
+    WHERE estado IS NOT FALSE 
     GROUP BY mes_fecha, año_fecha
 ) AS ordenar 
 order by año_fecha,mes_fecha ASC;
@@ -153,18 +153,19 @@ order by año_fecha,mes_fecha ASC;
 #    que haya extraído menos dinero.
 SELECT 
     nombre AS 'Nombre', 
-    ROUND(SUM(dinero), 2) AS 'Total extraccion'
+    ROUND(MIN(dinero), 2) AS 'Total extraccion'
 FROM usr 
 JOIN extracciones 
-USING(num_usr) 
+USING(num_usr)
 GROUP BY num_usr
-HAVING SUM(dinero) = (
-	SELECT MIN(min_COUNT)
+HAVING MIN(dinero) = (
+	SELECT MIN(min_count)
 	FROM (
-		SELECT SUM(dinero) AS min_COUNT
+		SELECT SUM(dinero) AS min_count
 		FROM usr
 		JOIN extracciones 
         USING(num_usr) 
+        WHERE estado IS NOT FALSE
 		GROUP BY num_usr
 	) AS min_dinero
 );
@@ -185,18 +186,20 @@ WHERE t_estado='Error';
 # 9. Consulta para obtener al nombre del usuario que haya realizado más movimientos erróneos.
 SELECT 
     nombre AS 'Nombre', 
+    num_usr,
     COUNT(estado) AS 'Cantidad error'
 FROM usr 
 JOIN extracciones 
-USING(num_usr) 
-GROUP BY num_usr
+USING(num_usr)
+WHERE estado IS NOT TRUE
+GROUP BY nombre, num_usr
 HAVING COUNT(estado) = (
-	SELECT MAX(max_COUNT)
+	SELECT MAX(max_count)
 	FROM (
-		SELECT COUNT(estado) AS max_COUNT
+		SELECT COUNT(estado) AS max_count
 		FROM usr
 		JOIN extracciones 
-        USING(num_usr) 
+        USING(num_usr)
 		GROUP BY num_usr
 	) AS max_error
 );
@@ -210,7 +213,7 @@ HAVING COUNT(estado) = (
 SELECT
     año_fecha AS 'Año',
     mes_fecha AS 'Mes',
-    COUNT_estado AS 'Cantidad'
+    count_estado AS 'Cantidad'
 FROM (
     SELECT 
         YEAR(fecha) AS año_fecha, 
@@ -219,7 +222,7 @@ FROM (
     FROM extracciones
     GROUP BY YEAR(fecha), MONTH(fecha)
 ) AS cuenta
-WHERE COUNT_estado=TRUE;
+WHERE count_estado=TRUE;
 
 # 11. Consulta para obtener la cantidad de retornos de dinero.
 SELECT
